@@ -1,0 +1,28 @@
+services:
+  origin:
+    build:
+      context: .
+      dockerfile: origin.Dockerfile
+    expose:
+      - "8081"
+    networks:
+      - labnet
+
+  proxy:
+    build:
+      context: .
+      dockerfile: proxy.Dockerfile
+    environment:
+      SAFE_MODE: "${SAFE_MODE:-0}"
+      ORIGIN_HOST: origin
+      ORIGIN_PORT: "8081"
+    depends_on:
+      - origin
+    ports:
+      - "127.0.0.1:8080:8080"
+    networks:
+      - labnet
+
+networks:
+  labnet:
+    internal: true
